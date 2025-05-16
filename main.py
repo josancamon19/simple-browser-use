@@ -16,10 +16,8 @@ def observe_environment(
         page = browser.new_page()
         page.goto(url)
 
-        # Extract the accessibility snapshot
-        snapshot = page.accessibility.snapshot()
-
         if save_accessibility_tree:
+            snapshot = page.accessibility.snapshot()
             with open(accessibility_tree_filename, "w") as f:
                 json.dump(snapshot, f, indent=2)
 
