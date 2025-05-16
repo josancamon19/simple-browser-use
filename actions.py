@@ -3,8 +3,6 @@ from playwright.sync_api import Page
 
 
 def _get_browser_state(page: Page, wait: bool = False) -> str:
-    # TODO: should actually return state, like this? or completion + new state
-    # -- shouldn't keep dom many times, should be a latest dom only.
     if wait:
         page.wait_for_timeout(1000)
 
