@@ -1,6 +1,6 @@
 ## Making a Simple Browser Use Agent
 
-This repo aims to make a fully working implementation of a browser agent without basing on existing implementations.
+This repo aims to make a fully working implementation of a browser agent without taking on existing implementations.
 
 It shouldn't be that hard.
 
@@ -28,3 +28,9 @@ It shouldn't be that hard.
 - [ ] each function should return completion message + new state
 - [ ] the state dom should be cleaned from previous trajectories.
 - [ ] what happens when it tries to click, but hasn't scrolled to have that \#id visible
+- [ ] track traces
+- [ ] create a test dataset, run untill all work
+- [ ] handle js/render waits
+- [ ] human in the loop interaction, when to ask for help
+- [ ] run it with webarena and submit results
+- [ ] how to use other observation inputs

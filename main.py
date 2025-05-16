@@ -26,8 +26,6 @@ if __name__ == "__main__":
             """Types the given text into the element specified by the selector."""
             return actions.type_text(page, selector, text)
 
-        # TODO: not being needed
-        # - what happens when the agent is given a dom, and tries to click on the element with the selector?
         def scroll(direction: Literal["up", "down"]):
             """Scrolls the page up or down."""
             return actions.scroll(page, direction)
@@ -39,6 +37,7 @@ if __name__ == "__main__":
             tools=[go_to, click, type_text, scroll],
             max_iters=20,
         )
-        instructions = "Go to wikipedia.org, find the top article of the day, navigate to it, and find the latest editor name."
-        answer = react(task=instructions)
+        answer = react(
+            task="Go to wikipedia.org, find the top article of the day, navigate to it, and find the latest editor name."
+        )
         print(answer)
