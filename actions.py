@@ -1,25 +1,31 @@
+from typing import Literal
 from playwright.sync_api import Page
 
 
 def _get_browser_state(page: Page, wait: bool = False) -> str:
+    # TODO: should actually return state, like this? or completion + new state
+    # -- shouldn't keep dom many times, should be a latest dom only.
     if wait:
         page.wait_for_timeout(1000)
+
     return page.content()
 
 
+def go_to(page: Page, url: str) -> None:
+    page.goto(url)
+    return _get_browser_state(page)
+
+
 def click(page: Page, selector: str) -> None:
-    """
-    Clicks on the element specified by the selector.
-    """
     page.click(selector)
     return _get_browser_state(page)
 
 
-def scroll(page: Page, x: int = 0, y: int = 0) -> None:
-    """
-    Scrolls the page to the specified x, y coordinates.
-    """
-    page.evaluate(f"window.scrollTo({x}, {y});")
+def scroll(page: Page, direction: Literal["down", "up"] = "down") -> None:
+    if direction == "down":
+        page.evaluate("window.scrollBy(0, window.innerHeight);")
+    elif direction == "up":
+        page.evaluate("window.scrollBy(0, -window.innerHeight);")
     return _get_browser_state(page)
 
 
@@ -54,19 +60,7 @@ def type_text(
     clear_first: bool = True,
     delay: int = 0,
 ) -> None:
-    """
-    Types the given text into the element specified by the selector.
-    Optionally clears the field first and sets a delay between keystrokes.
-    """
     if clear_first:
         page.fill(selector, "")
     page.type(selector, text, delay=delay)
-    return _get_browser_state(page)
-
-
-def go_to(page: Page, url: str) -> None:
-    """
-    Navigates the page to the specified URL.
-    """
-    page.goto(url)
     return _get_browser_state(page)
