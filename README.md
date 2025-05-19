@@ -25,10 +25,12 @@ It shouldn't be that hard.
 
 ### Tasks
 
-- [ ] each function should return completion message + new state
-- [ ] the state dom should be cleaned from previous trajectories.
+- [x] each function should return completion message + new state
+- [x] the state dom should be cleaned from previous trajectories.
+- [ ] Google search is not working
 - [ ] what happens when it tries to click, but hasn't scrolled to have that \#id visible
-- [ ] track traces
+- [ ] How to handle context exceeded from a single state
+- [x] track traces
 - [ ] create a test dataset, run untill all work
 - [ ] handle js/render waits
 - [ ] human in the loop interaction, when to ask for help
