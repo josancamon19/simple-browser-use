@@ -63,7 +63,11 @@ if __name__ == "__main__":
             """Navigates back to the previous page."""
             return {"new_state": actions.go_back(page), "result": "success"}
 
-        instructions = "Navigate seamlessly between pages, clicking and typing as needed to complete the task."
+        instructions = """
+        You are a browser agent that can navigate between pages, click on elements, type text, scroll, and go back.
+        You will be given a task to complete, and you will need to use the tools provided to complete the task.
+        After each action, you will get the current state of the page.
+        """
         signature = dspy.Signature("task: str -> result: str", instructions)
         react = ReActTruncated(
             signature,
@@ -71,6 +75,6 @@ if __name__ == "__main__":
             max_iters=20,
         )
         answer = react(
-            task="Go to google.com, then search servicenow research, open it, then find the papers from 2024 related to browser agents."
+            task="Go to https://www.servicenow.com/research/, and find the latest paper from 2024 related to browser agents."
         )
         print(answer)

@@ -19,6 +19,8 @@ It shouldn't be that hard.
 2. The accessibility tree is not the full DOM — it’s a filtered, semantic tree designed for screen readers and assistive technologies. It only includes nodes that are “accessible” (i.e., relevant for user interaction or understanding).
 3. Playwright launches a real browser, headless (invisible) by default.
 4. V1, works in 110 lines.
+5. Google search has a blocker for playwright
+   1. Some pages as well? trying servicenow research, but doesn't seem to open.
 
 
 ------
@@ -27,7 +29,8 @@ It shouldn't be that hard.
 
 - [x] each function should return completion message + new state
 - [x] the state dom should be cleaned from previous trajectories.
-- [ ] Google search is not working
+- [x] Google search is not working
+- [ ] Prev state shouldn't be fully cleaned, cause when to backtrack
 - [ ] what happens when it tries to click, but hasn't scrolled to have that \#id visible
 - [ ] How to handle context exceeded from a single state
 - [x] track traces

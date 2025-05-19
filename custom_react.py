@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Callable, Literal
+from typing import Callable
 
 
 import dspy
@@ -26,15 +26,19 @@ class ReActTruncated(dspy.ReAct):
                 )
                 break
 
-            # AttributeError: 'NoneType' object has no attribute 'next_thought' (context exceeded)
-            trajectory[f"thought_{idx}"] = pred.next_thought 
+            # TODO: AttributeError: 'NoneType' object has no attribute 'next_thought' (context exceeded)
+            trajectory[f"thought_{idx}"] = pred.next_thought
             trajectory[f"tool_name_{idx}"] = pred.next_tool_name
             trajectory[f"tool_args_{idx}"] = pred.next_tool_args
 
             try:
                 # --------- truncate previous observations (DOM) ---------
                 for j in range(idx):
-                    trajectory[f"observation_{j}"]["new_state"] = "truncated"
+                    try:
+                        # handle default trajectory truncation as well (becomes a str)
+                        trajectory[f"observation_{j}"]["new_state"] = "truncated"
+                    except TypeError:
+                        pass
                 # ---------
                 trajectory[f"observation_{idx}"] = self.tools[pred.next_tool_name](
                     **pred.next_tool_args
