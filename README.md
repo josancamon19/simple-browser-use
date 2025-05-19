@@ -19,24 +19,27 @@ It shouldn't be that hard.
 2. The accessibility tree is not the full DOM — it’s a filtered, semantic tree designed for screen readers and assistive technologies. It only includes nodes that are “accessible” (i.e., relevant for user interaction or understanding).
 3. Playwright launches a real browser, headless (invisible) by default.
 4. V1, works in 110 lines.
-5. Google search has a blocker for playwright
-   1. Some pages as well? trying servicenow research, but doesn't seem to open.
+5. Some websites have blockers for agents (e.g. Google search)
 
 
 ------
 
 ### Tasks
 
-- [x] each function should return completion message + new state
-- [x] the state dom should be cleaned from previous trajectories.
-- [x] Google search is not working
-   - [ ] Should block it, or fix it
-- [ ] Prev state shouldn't be fully cleaned, cause when to backtrack
+
+- [ ] Test multiple models, multiple reasoning levels
+- [ ] handle js/render waits, longer wait times
+- [ ] confirm search bars (enter after, bool param)
 - [ ] what happens when it tries to click, but hasn't scrolled to have that \#id visible
-- [ ] How to handle context exceeded from a single state
-- [x] track traces
+  - [ ] Quickly test playwright
+- [ ] Google search should be fixed, or a blacklisted websites should be set
+- [ ] Prev state shouldn't be fully cleaned, (maybe summarized, what was this) cause when to backtrack
+- [ ] Test playwright MCP standalone, how's performance, any tricks from there?
+- [ ] More actions to include (?)
+
+
 - [ ] create a test dataset, run untill all work
-- [ ] handle js/render waits
 - [ ] human in the loop interaction, when to ask for help
 - [ ] run it with webarena and submit results
 - [ ] how to use other observation inputs
+- [ ] How to handle context exceeded from a single state

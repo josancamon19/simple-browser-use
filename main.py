@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Literal
-import uuid
 from pydantic import BaseModel, Field
 from playwright.sync_api import sync_playwright
 import os
