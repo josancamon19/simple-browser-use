@@ -5,3 +5,4 @@ screenshot.png
 .env
 __pycache__
 mlruns
+frames

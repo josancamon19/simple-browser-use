@@ -30,6 +30,7 @@ It shouldn't be that hard.
 - [x] each function should return completion message + new state
 - [x] the state dom should be cleaned from previous trajectories.
 - [x] Google search is not working
+   - [ ] Should block it, or fix it
 - [ ] Prev state shouldn't be fully cleaned, cause when to backtrack
 - [ ] what happens when it tries to click, but hasn't scrolled to have that \#id visible
 - [ ] How to handle context exceeded from a single state

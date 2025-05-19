@@ -1,25 +1,20 @@
-import os
+from datetime import datetime
 from typing import Literal
+import uuid
 from pydantic import BaseModel, Field
 from playwright.sync_api import sync_playwright
+import os
 import dspy
 import actions
-import os
 import base64
 import mlflow
-
 from custom_react import ReActTruncated
 
 
 LANGFUSE_AUTH = base64.b64encode(
     f"{os.getenv('LANGFUSE_PUBLIC_KEY')}:{os.getenv('LANGFUSE_SECRET_KEY')}".encode()
 ).decode()
-
-os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"] = (
-    "https://us.cloud.langfuse.com/api/public/otel/v1/traces"
-)
 os.environ["OTEL_EXPORTER_OTLP_TRACES_HEADERS"] = f"Authorization=Basic {LANGFUSE_AUTH}"
-os.environ["OTEL_EXPORTER_OTLP_TRACES_PROTOCOL"] = "http/protobuf"
 
 lm = dspy.LM(
     "anthropic/claude-3-7-sonnet-latest", api_key=os.getenv("ANTHROPIC_API_KEY")
@@ -39,29 +34,53 @@ if __name__ == "__main__":
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
         page = browser.new_page()
+        run_id = str(datetime.now().timestamp())  # mlflow.active_run()
+
+        os.makedirs(f"frames/{run_id}", exist_ok=True)
+        frame_counter = {"count": 0}
+
+        def save_frame(page, action_name, extra_info=""):
+            frame_counter["count"] += 1
+            filename = f"{frame_counter['count']:03d}_{action_name}"
+            if extra_info:
+                filename += f"_{extra_info}"
+            filename += ".png"
+            path = os.path.join(f"frames/{run_id}", filename)
+            page.screenshot(path=path, full_page=False)
+            return path
 
         def go_to(url: str) -> ResultSchema:
             """Navigates to the specified URL."""
-            return {"new_state": actions.go_to(page, url), "result": "success"}
+            new_state = actions.go_to(page, url)
+            ss_info = url.replace("https://", "").replace("/", "_")
+            save_frame(page, "go_to", extra_info=ss_info)
+            return {"new_state": new_state, "result": "success"}
 
         def click(selector: str) -> ResultSchema:
             """Clicks on the element specified by the selector."""
-            return {"new_state": actions.click(page, selector), "result": "success"}
+            new_state = actions.click(page, selector)
+            ss_info = selector.replace("#", "id_").replace(".", "cls_")
+            save_frame(page, "click", extra_info=ss_info)
+            return {"new_state": new_state, "result": "success"}
 
         def type_text(selector: str, text: str) -> ResultSchema:
             """Types the given text into the element specified by the selector."""
-            return {
-                "new_state": actions.type_text(page, selector, text),
-                "result": "success",
-            }
+            new_state = actions.type_text(page, selector, text)
+            ss_info = selector.replace("#", "id_").replace(".", "cls_")
+            save_frame(page, "type_text", extra_info=ss_info)
+            return {"new_state": new_state, "result": "success"}
 
         def scroll(direction: Literal["up", "down"]) -> ResultSchema:
             """Scrolls the page up or down."""
-            return {"new_state": actions.scroll(page, direction), "result": "success"}
+            new_state = actions.scroll(page, direction)
+            save_frame(page, "scroll", extra_info=direction)
+            return {"new_state": new_state, "result": "success"}
 
         def go_back() -> ResultSchema:
             """Navigates back to the previous page."""
-            return {"new_state": actions.go_back(page), "result": "success"}
+            new_state = actions.go_back(page)
+            save_frame(page, "go_back")
+            return {"new_state": new_state, "result": "success"}
 
         instructions = """
         You are a browser agent that can navigate between pages, click on elements, type text, scroll, and go back.
@@ -75,6 +94,6 @@ if __name__ == "__main__":
             max_iters=20,
         )
         answer = react(
-            task="Go to https://www.servicenow.com/research/, and find the latest paper from 2024 related to browser agents."
+            task="Go to arxiv, and find the latest paper from 'service now' in 2024 related to browser agents."
         )
         print(answer)
