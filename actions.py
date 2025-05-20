@@ -6,8 +6,13 @@ def _get_browser_state(page: Page, wait: bool = False) -> str:
     if wait:
         # TODO: any different way to handle delays? js, load times?
         page.wait_for_timeout(1000)
-    # save page content as html
-    return page.content()
+
+    return {
+        "html": page.content(),
+        "url": page.url,
+        "title": page.title(),
+        "accessibility_tree": page.accessibility.snapshot(interesting_only=True),
+    }
 
 
 def go_to(page: Page, url: str) -> str:
