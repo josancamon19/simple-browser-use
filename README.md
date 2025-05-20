@@ -28,7 +28,6 @@ It shouldn't be that hard.
 
 - [ ] what happens when it tries to click, but hasn't scrolled to have that \#id visible
   - [ ] Quickly test playwright
-- [ ] Prev state shouldn't be fully cleaned, (maybe summarized, what was this) cause when to backtrack
 - [ ] Test playwright MCP standalone, how's performance, any tricks from there?
 - [ ] More actions to include (?)
 - [ ] Improve DOM Parser, and/or space observation tasks

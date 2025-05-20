@@ -39,7 +39,8 @@ class ReActTruncated(dspy.ReAct):
                 for j in range(idx):
                     try:
                         # handle default trajectory truncation as well (becomes a str)
-                        trajectory[f"observation_{j}"]["new_state"] = "truncated"
+                        # TODO: consider summarizing the contents of the html
+                        trajectory[f"observation_{j}"]["new_state"]["html"] = "truncated"
                     except TypeError:
                         pass
                 # ---------
