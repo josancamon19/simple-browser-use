@@ -4,17 +4,10 @@ from pydantic import BaseModel, Field
 from playwright.sync_api import sync_playwright
 import os
 import dspy
+import weave
 import actions
-import base64
-import mlflow
 from custom_react import ReActTruncated
 import utils
-
-
-LANGFUSE_AUTH = base64.b64encode(
-    f"{os.getenv('LANGFUSE_PUBLIC_KEY')}:{os.getenv('LANGFUSE_SECRET_KEY')}".encode()
-).decode()
-os.environ["OTEL_EXPORTER_OTLP_TRACES_HEADERS"] = f"Authorization=Basic {LANGFUSE_AUTH}"
 
 lm = dspy.LM(
     "anthropic/claude-3-7-sonnet-latest",
@@ -24,7 +17,7 @@ lm = dspy.LM(
     max_tokens=64000,
 )
 dspy.configure(lm=lm)
-mlflow.dspy.autolog()
+weave.init(os.getenv("WANDB_PROJECT_NAME"))
 
 blacklist = ["https://google.com", "https://www.google.com"]
 
