@@ -4,6 +4,7 @@ from playwright.sync_api import Page
 
 def _get_browser_state(page: Page, wait: bool = False) -> str:
     if wait:
+        # TODO: any different way to handle delays? js, load times?
         page.wait_for_timeout(1000)
     return page.content()
 
@@ -31,6 +32,22 @@ def scroll(page: Page, direction: Literal["down", "up"] = "down") -> str:
     return _get_browser_state(page)
 
 
+def type_text(
+    page: Page,
+    selector: str,
+    text: str,
+    clear_first: bool = True,
+    delay: int = 0,
+) -> None:
+    if clear_first:
+        page.fill(selector, "")
+    page.type(selector, text, delay=delay)
+    return _get_browser_state(page)
+
+
+# ----
+
+
 def hover(page: Page, selector: str) -> str:
     page.hover(selector)
     return _get_browser_state(page)
@@ -43,17 +60,4 @@ def rclick(page: Page, selector: str) -> str:
 
 def double_click(page: Page, selector: str) -> str:
     page.dblclick(selector)
-    return _get_browser_state(page)
-
-
-def type_text(
-    page: Page,
-    selector: str,
-    text: str,
-    clear_first: bool = True,
-    delay: int = 0,
-) -> None:
-    if clear_first:
-        page.fill(selector, "")
-    page.type(selector, text, delay=delay)
     return _get_browser_state(page)

@@ -8,6 +8,7 @@ import actions
 import base64
 import mlflow
 from custom_react import ReActTruncated
+import utils
 
 
 LANGFUSE_AUTH = base64.b64encode(
@@ -16,7 +17,11 @@ LANGFUSE_AUTH = base64.b64encode(
 os.environ["OTEL_EXPORTER_OTLP_TRACES_HEADERS"] = f"Authorization=Basic {LANGFUSE_AUTH}"
 
 lm = dspy.LM(
-    "anthropic/claude-3-7-sonnet-latest", api_key=os.getenv("ANTHROPIC_API_KEY")
+    "anthropic/claude-3-7-sonnet-latest",
+    api_key=os.getenv("ANTHROPIC_API_KEY"),
+    thinking={"type": "enabled", "budget_tokens": 10000},
+    temperature=1,
+    max_tokens=64000,
 )
 dspy.configure(lm=lm)
 mlflow.dspy.autolog()
@@ -62,11 +67,14 @@ if __name__ == "__main__":
             save_frame(page, "click", extra_info=ss_info)
             return {"new_state": new_state, "result": "success"}
 
-        def type_text(selector: str, text: str) -> ResultSchema:
+        def type_text(selector: str, text: str) -> ResultSchema:  # submit: bool = False
             """Types the given text into the element specified by the selector."""
-            new_state = actions.type_text(page, selector, text)
+            new_state = actions.type_text(page, selector, text, True)
             ss_info = selector.replace("#", "id_").replace(".", "cls_")
             save_frame(page, "type_text", extra_info=ss_info)
+            # if submit:
+            #     page.keyboard.press("Enter")
+            #     save_frame(page, "type_text", extra_info=ss_info + "_enter")
             return {"new_state": new_state, "result": "success"}
 
         def scroll(direction: Literal["up", "down"]) -> ResultSchema:
@@ -93,6 +101,9 @@ if __name__ == "__main__":
             max_iters=20,
         )
         answer = react(
-            task="Go to arxiv, and find the latest paper from 'service now' in 2024 related to browser agents."
+            task="Find the 2 main authors of the webarena paper, and provide their h-index."
         )
         print(answer)
+
+        # After finishing, join all frames as a gif (or video if preferred)
+        utils.create_gif(run_id)

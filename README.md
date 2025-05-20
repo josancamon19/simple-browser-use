@@ -20,15 +20,15 @@ It shouldn't be that hard.
 3. Playwright launches a real browser, headless (invisible) by default.
 4. V1, works in 110 lines.
 5. Some websites have blockers for agents (e.g. Google search)
-
+6. sonnet-3-7 latest is best
 
 ------
 
 ### Tasks
 
-
-- [ ] Test multiple models, multiple reasoning levels
-- [ ] handle js/render waits, longer wait times
+- [x] Get frames as a gif
+- [x] Test multiple models, multiple reasoning levels
+- [x] handle js/render waits, longer wait times
 - [ ] confirm search bars (enter after, bool param)
 - [ ] what happens when it tries to click, but hasn't scrolled to have that \#id visible
   - [ ] Quickly test playwright
@@ -36,10 +36,14 @@ It shouldn't be that hard.
 - [ ] Prev state shouldn't be fully cleaned, (maybe summarized, what was this) cause when to backtrack
 - [ ] Test playwright MCP standalone, how's performance, any tricks from there?
 - [ ] More actions to include (?)
+- [ ] Improve DOM Parser, and/or space observation tasks
+- [ ] Make a cli
 
 
 - [ ] create a test dataset, run untill all work
+- [ ] run it with webarena, webvoyager, gaia and submit results
+   - Try hud.so, benchflow + oyo
+
 - [ ] human in the loop interaction, when to ask for help
-- [ ] run it with webarena and submit results
 - [ ] how to use other observation inputs
 - [ ] How to handle context exceeded from a single state

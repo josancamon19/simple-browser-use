@@ -31,6 +31,9 @@ class ReActTruncated(dspy.ReAct):
             trajectory[f"tool_name_{idx}"] = pred.next_tool_name
             trajectory[f"tool_args_{idx}"] = pred.next_tool_args
 
+            print(f"[{idx}] Thought: {pred.next_thought}")
+            print(f"[{idx}] Tool: {pred.next_tool_name} | Args: {pred.next_tool_args}")
+
             try:
                 # --------- truncate previous observations (DOM) ---------
                 for j in range(idx):
