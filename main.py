@@ -39,6 +39,17 @@ class ResultSchema(BaseModel):
     )
 
 
+class BrowserAgent(dspy.Signature):
+    """
+    You are a helpful browser agent that has access to a browser.
+    You will be given a task to complete and a list of available tools.
+    Your goal is to complete the task using the available tools.
+    """
+
+    task: str = dspy.InputField()
+    answer: str = dspy.OutputField()
+
+
 if __name__ == "__main__":
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
@@ -103,19 +114,13 @@ if __name__ == "__main__":
             save_frame(page, "go_back")
             return {"new_state": new_state, "result": "success"}
 
-        instructions = """
-        You are a browser agent that can navigate between pages, click on elements, type text, scroll, and go back.
-        You will be given a task to complete, and you will need to use the tools provided to complete the task.
-        After each action, you will get the current state of the page.
-        """
-        signature = dspy.Signature("task: str -> result: str", instructions)
         react = ReActTruncated(
-            signature,
+            BrowserAgent,
             tools=[go_to, click, type_text, scroll, go_back],
             max_iters=20,
         )
         answer = react(
-            task="Go to google.com, search for 'webarena', and click on the first result."
+            task="Go to arxiv and find the top 3 papers regarding browser automation benchmarks."
         )
         print(answer)
 
