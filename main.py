@@ -26,11 +26,16 @@ lm = dspy.LM(
 dspy.configure(lm=lm)
 mlflow.dspy.autolog()
 
+blacklist = ["https://google.com", "https://www.google.com"]
+
 
 class ResultSchema(BaseModel):
     new_state: str = Field(description="The new state of the page after the action.")
     result: Literal["success", "failure"] = Field(
         description="The result of the action."
+    )
+    error: str | None = Field(
+        description="The error message if the action failed, otherwise None."
     )
 
 
@@ -55,6 +60,12 @@ if __name__ == "__main__":
 
         def go_to(url: str) -> ResultSchema:
             """Navigates to the specified URL."""
+            if any(b in url for b in blacklist):
+                return {
+                    "new_state": page.content(),
+                    "result": "failure",
+                    "error": "Blacklisted URL",
+                }
             new_state = actions.go_to(page, url)
             ss_info = url.replace("https://", "").replace("/", "_")
             save_frame(page, "go_to", extra_info=ss_info)
@@ -67,14 +78,17 @@ if __name__ == "__main__":
             save_frame(page, "click", extra_info=ss_info)
             return {"new_state": new_state, "result": "success"}
 
-        def type_text(selector: str, text: str) -> ResultSchema:  # submit: bool = False
-            """Types the given text into the element specified by the selector."""
+        def type_text(selector: str, text: str, submit: bool = False) -> ResultSchema:
+            """Types the given text into the element specified by the selector. If submit is True, the text will be submitted by pressing enter."""
             new_state = actions.type_text(page, selector, text, True)
             ss_info = selector.replace("#", "id_").replace(".", "cls_")
             save_frame(page, "type_text", extra_info=ss_info)
-            # if submit:
-            #     page.keyboard.press("Enter")
-            #     save_frame(page, "type_text", extra_info=ss_info + "_enter")
+
+            if submit:
+                new_state = actions.submit(page)
+                save_frame(page, "submit", extra_info=ss_info)
+                return {"new_state": new_state, "result": "success"}
+
             return {"new_state": new_state, "result": "success"}
 
         def scroll(direction: Literal["up", "down"]) -> ResultSchema:
@@ -101,7 +115,7 @@ if __name__ == "__main__":
             max_iters=20,
         )
         answer = react(
-            task="Find the 2 main authors of the webarena paper, and provide their h-index."
+            task="Go to google.com, search for 'webarena', and click on the first result."
         )
         print(answer)
 

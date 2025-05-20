@@ -26,13 +26,8 @@ It shouldn't be that hard.
 
 ### Tasks
 
-- [x] Get frames as a gif
-- [x] Test multiple models, multiple reasoning levels
-- [x] handle js/render waits, longer wait times
-- [ ] confirm search bars (enter after, bool param)
 - [ ] what happens when it tries to click, but hasn't scrolled to have that \#id visible
   - [ ] Quickly test playwright
-- [ ] Google search should be fixed, or a blacklisted websites should be set
 - [ ] Prev state shouldn't be fully cleaned, (maybe summarized, what was this) cause when to backtrack
 - [ ] Test playwright MCP standalone, how's performance, any tricks from there?
 - [ ] More actions to include (?)

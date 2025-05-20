@@ -6,6 +6,7 @@ def _get_browser_state(page: Page, wait: bool = False) -> str:
     if wait:
         # TODO: any different way to handle delays? js, load times?
         page.wait_for_timeout(1000)
+    # save page content as html
     return page.content()
 
 
@@ -42,6 +43,11 @@ def type_text(
     if clear_first:
         page.fill(selector, "")
     page.type(selector, text, delay=delay)
+    return _get_browser_state(page)
+
+
+def submit(page: Page) -> str:
+    page.keyboard.press("Enter")
     return _get_browser_state(page)
 
 
