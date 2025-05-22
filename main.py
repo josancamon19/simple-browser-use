@@ -22,13 +22,20 @@ weave.init(os.getenv("WANDB_PROJECT_NAME"))
 blacklist = ["https://google.com", "https://www.google.com"]
 
 
+class NewStateSchema(BaseModel):
+    url: str = Field(description="The URL of the page.")
+    title: str = Field(description="The title of the page.")
+    snapshot: str = Field(
+        description="The contents of the page, either DOM html or Yaml snapshot."
+    )
+
+
 class ResultSchema(BaseModel):
-    new_state: str = Field(description="The new state of the page after the action.")
+    new_state: NewStateSchema = Field(
+        description="The new state of the page after the action."
+    )
     result: Literal["success", "failure"] = Field(
         description="The result of the action."
-    )
-    error: str | None = Field(
-        description="The error message if the action failed, otherwise None."
     )
 
 
@@ -45,14 +52,15 @@ class BrowserAgent(dspy.Signature):
 
 if __name__ == "__main__":
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=False, channel="chrome")
         page = browser.new_page()
-        run_id = str(datetime.now().timestamp())  # mlflow.active_run()
+        run_id = str(datetime.now().timestamp())
 
         os.makedirs(f"frames/{run_id}", exist_ok=True)
         frame_counter = {"count": 0}
 
         def save_frame(page, action_name, extra_info=""):
+            # TODO: Record mouse click(?) or bounding boxes
             frame_counter["count"] += 1
             filename = f"{frame_counter['count']:03d}_{action_name}"
             if extra_info:
@@ -64,12 +72,6 @@ if __name__ == "__main__":
 
         def go_to(url: str) -> ResultSchema:
             """Navigates to the specified URL."""
-            if any(b in url for b in blacklist):
-                return {
-                    "new_state": page.content(),
-                    "result": "failure",
-                    "error": "Blacklisted URL",
-                }
             new_state = actions.go_to(page, url)
             ss_info = url.replace("https://", "").replace("/", "_")
             save_frame(page, "go_to", extra_info=ss_info)
@@ -112,10 +114,10 @@ if __name__ == "__main__":
             tools=[go_to, click, type_text, scroll, go_back],
             max_iters=20,
         )
-        answer = react(
-            task="Go to arxiv and find the top 3 papers regarding browser automation benchmarks."
+        result = react(
+            task="Open arxiv.org, and search for webarena, click on the first result."
         )
-        print(answer)
+        print(result.answer)
 
         # After finishing, join all frames as a gif (or video if preferred)
         utils.create_gif(run_id)

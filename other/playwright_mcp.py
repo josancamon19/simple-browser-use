@@ -2,9 +2,10 @@ import os
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 import dspy
+import weave
 
 server_params = StdioServerParameters(
-    command="npx", args=["@playwright/mcp@latest", "-v"], env=None
+    command="npx", args=["@playwright/mcp@latest"], env=None
 )
 
 lm = dspy.LM(
@@ -15,6 +16,7 @@ lm = dspy.LM(
     max_tokens=64000,
 )
 dspy.configure(lm=lm)
+weave.init(os.getenv("WANDB_PROJECT_NAME"))
 
 
 class BrowserAgent(dspy.Signature):
@@ -48,6 +50,6 @@ if __name__ == "__main__":
 
     asyncio.run(
         run(
-            "Go to arxiv and find the top 3 papers regarding browser automation benchmarks."
+            "As of the 2020 census, what was the population difference between the largest county seat and smallest county seat, by land area of the county seat, in Washington state? For population figures, please use the official data from data.census.gov. Please report the integer difference."
         )
     )

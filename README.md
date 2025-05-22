@@ -25,10 +25,9 @@ It shouldn't be that hard.
 ------
 
 ### Tasks
-
-- [ ] Fix tool issues
-  - [ ] Error: Page.content: Unable to retrieve content because the page is navigating and changing the content.
-  - [ ] TimeoutError: Page.click: Timeout 30000ms exceeded. Call log: - waiting for locator("a[href='/search/advanced']")
+- [ ] Trouble finding selector when clicking, happening a lot, why? '[ref=e8]'
+- [ ] click and type fail, use mcp as example?
+- [ ] Fix google search option, how?
 - [ ] what happens when it tries to click, but hasn't scrolled to have that \#id visible
   - [ ] Quickly test playwright
 - [ ] Test playwright MCP standalone, how's performance, any tricks from there?
